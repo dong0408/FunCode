@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Card, Button, Checkbox, Form, Input } from "antd";
 import "./index.scss";
 import logo from "assets/logo.png";
+import request from "utils/request";
 export default class Login extends Component {
   render() {
     return (
@@ -10,42 +11,57 @@ export default class Login extends Component {
           <img src={logo} alt="" className="login-logo" />
           {/*react里的图片src必须像这样显示导入*/}
           {/* 插入表单 */}
-          <Form size="large">
+          <Form
+            size="large"
+            onFinish={this.onFinish}
+            validateTrigger={["onChange", "onBlur"]}
+            initialValues={{
+              mobile: "13911111111",
+              code: "246810",
+              agree: true,
+            }}
+          >
             <Form.Item
               name="mobile"
+              validateTrigger={["onChange", "onBlur"]}
               rules={[
                 {
                   required: true,
                   message: "手机号不能为空",
+                  validateTrigger: "onBlur",
                 },
                 {
                   pattern: /^1[3-9]\d{9}$/,
                   message: "手机号格式错误",
-                  validateTrigger: "onchange",
+                  validateTrigger: "onBlur",
                 },
               ]}
             >
-              <Input placeholder="请输入你的手机号" />
+              <Input placeholder="请输入你的手机号" autoComplete="off" />
             </Form.Item>
 
             <Form.Item
               name="code"
+              validateTrigger={["onChange", "onBlur"]}
               rules={[
                 {
-                  required: true,
-                  message: "验证码不能为空",
-                },
-                {
-                  pattern: /^\6{6}$/,
-                  message: "验证码格式错误",
+                  validator(rule, value) {
+                    //  自定义校验规则
+                    if (value) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject(new Error("请阅读并同意用户协议"));
+                    }
+                  },
                 },
               ]}
             >
-              <Input placeholder="请输入验证码"></Input>
+              <Input placeholder="请输入验证码" autoComplete="off"></Input>
             </Form.Item>
 
             <Form.Item
               valuePropName="checked"
+              name="agree"
               rules={[
                 {
                   required: true,
@@ -66,4 +82,15 @@ export default class Login extends Component {
       </div>
     );
   }
+  onFinish = async ({ mobile, code }) => {
+    const res = await request({
+      method: "post",
+      url: "/authorizations",
+      data: {
+        mobile,
+        code,
+      },
+    });
+    console.log(res);
+  };
 }
