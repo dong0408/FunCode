@@ -1,34 +1,17 @@
 import React from "react";
 import styles from "./index.module.scss";
-import { Breadcrumb, Layout, Menu } from "antd";
+import { Layout, Menu } from "antd";
+import { Route, Link, Routes } from "react-router-dom";
 import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
   LoginOutlined,
   HomeOutlined,
   DiffOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import Home from "pages/Home";
+import ArticleList from "pages/ArticleList";
+import ArticlePublish from "pages/ArticlePublish";
 const { Header, Content, Sider } = Layout;
-
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
-    const key = String(index + 1);
-    return {
-      key: `sub${key}`,
-      icon: React.createElement(icon),
-      label: `subnav ${key}`,
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
-  }
-);
 
 const LayoutCompontent = () => {
   return (
@@ -62,13 +45,13 @@ const LayoutCompontent = () => {
               theme="dark"
             >
               <Menu.Item key="1" icon={<HomeOutlined></HomeOutlined>}>
-                数据概览
+                <Link to="/home">数据概览</Link>
               </Menu.Item>
               <Menu.Item key="2" icon={<DiffOutlined />}>
-                内容管理
+                <Link to="/home/list">内容管理</Link>
               </Menu.Item>
               <Menu.Item key="3" icon={<EditOutlined />}>
-                发布文章
+                <Link to="/home/pubish"> 发布文章 </Link>
               </Menu.Item>
             </Menu>
           </Sider>
@@ -85,7 +68,17 @@ const LayoutCompontent = () => {
                 // background: colorBgContainer,
               }}
             >
-              Content
+              {/* <BrowserRouter> */}
+              <Routes>
+                <Route path="/home/*" element={<Home />} />
+              </Routes>
+              <Routes>
+                <Route path="/home/list" element={<ArticleList />}></Route>
+              </Routes>
+              <Routes>
+                <Route path="/home/pubish" element={<ArticlePublish />}></Route>
+              </Routes>
+              {/* </BrowserRouter> */}
             </Content>
           </Layout>
         </Layout>
