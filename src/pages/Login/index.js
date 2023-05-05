@@ -4,6 +4,7 @@ import "./index.scss";
 import logo from "assets/logo.png";
 import { login } from "api/user";
 import { useNavigate } from "react-router-dom";
+import { setToken } from "utils/storage";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +12,8 @@ const Login = () => {
     console.log("lkk");
     try {
       const res = await login(mobile, code);
-      localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("token", res.data.token);
+      setToken(res.data.token);
       navigate("/home");
       console.log(navigate, "93");
       message.success("登录成功");
@@ -32,7 +34,7 @@ const Login = () => {
         <Form
           size="large"
           // onFinish={() => onFinish(this)}
-          onFinish={ onFinish}
+          onFinish={onFinish}
           validateTrigger={["onChange", "onBlur"]}
           initialValues={{
             mobile: "13911111111",

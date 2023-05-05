@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./index.module.scss";
-import { Layout, Menu } from "antd";
-import { Route, Link, Routes } from "react-router-dom";
+import { Layout, Menu, Popconfirm, message } from "antd";
+import { Route, Link, Routes, BrowserRouter } from "react-router-dom";
+import AuthRoute from "../../components/AuthRoute";
 import {
   LoginOutlined,
   HomeOutlined,
@@ -11,9 +12,21 @@ import {
 import Home from "pages/Home";
 import ArticleList from "pages/ArticleList";
 import ArticlePublish from "pages/ArticlePublish";
+import { useNavigate } from "react-router-dom";
+import { removeToken } from "utils/storage";
+
 const { Header, Content, Sider } = Layout;
 
 const LayoutCompontent = () => {
+  const navigate = useNavigate();
+
+  //确定事件
+  const onConfirm = () => {
+    // localStorage.removeItem("token");
+    removeToken();
+    navigate("/login");
+    message.success("退出成功");
+  };
   return (
     <div className={styles.layout}>
       <Layout>
@@ -22,7 +35,14 @@ const LayoutCompontent = () => {
           <div className="profile">
             <span>用户名</span>
             <span>
-              <LoginOutlined /> 退出
+              <Popconfirm
+                description="你确定退出吗?"
+                okText="确定"
+                cancelText="退出"
+                onConfirm={onConfirm}
+              >
+                <LoginOutlined /> 退出
+              </Popconfirm>
             </span>
           </div>
         </Header>
@@ -45,9 +65,9 @@ const LayoutCompontent = () => {
               theme="dark"
             >
               <Menu.Item key="1" icon={<HomeOutlined></HomeOutlined>}>
-                <Link to="/home">数据概览</Link>
+                <Link to="/">数据概览</Link>
               </Menu.Item>
-              <Menu.Item key="2" icon={<DiffOutlined />}>
+              <Menu.Item key="2" icon={<DiffOutlined></DiffOutlined>}>
                 <Link to="/home/list">内容管理</Link>
               </Menu.Item>
               <Menu.Item key="3" icon={<EditOutlined />}>
@@ -70,13 +90,9 @@ const LayoutCompontent = () => {
             >
               {/* <BrowserRouter> */}
               <Routes>
-                <Route path="/home/*" element={<Home />} />
-              </Routes>
-              <Routes>
-                <Route path="/home/list" element={<ArticleList />}></Route>
-              </Routes>
-              <Routes>
-                <Route path="/home/pubish" element={<ArticlePublish />}></Route>
+                <Route exact path="/*" element={<Home />} />
+                <Route path="/home/list" element={<ArticleList />} />
+                <Route path="/home/pubish" element={<ArticlePublish />} />
               </Routes>
               {/* </BrowserRouter> */}
             </Content>
